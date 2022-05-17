@@ -1,6 +1,16 @@
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 
+const isValid = function (value) {
+    if (typeof value === "undefined" || value === null) return false;
+    if (typeof value === "string" && value.trim().length === 0) return false;
+    return true;
+  };
+
+const isValidTitle = function (title) {
+    return ["Mr", "Miss", "Mrs"].indexOf(title) !== -1;
+  };
+
 const createUser = async function (req, res) {
   try {
     const data = req.body;
@@ -15,10 +25,11 @@ const createUser = async function (req, res) {
     }
 
     // Checking if title is sent through body or not//
-    if (!/^(Miss|Mr|Mrs)$/.test(title)) {
+    
+    if (!isValidTitle(title)) {
       return res
         .status(400)
-        .send({ status: false, message: "Please enter correct title." });
+        .send({ status: false, message: "Please provide right title" });
     }
 
     // Checking if name is sent through body or not//

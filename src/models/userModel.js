@@ -6,7 +6,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: "title required",
       enum: ["Mr", "Mrs", "Miss"],
-      trim: true,
     },
     name: { type: String, required: "name is required", trim: true },
     phone: { type: String, required: "phone is required", unique: true },
@@ -14,15 +13,17 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: "email is required",
       unique: true,
+      trim:true,
+      lowercase:true,
     },
     password: {
       type: String,
       required: "password is required",
     },
     address: {
-      street: { type: String },
-      city: { type: String },
-      pincode: { type: String },
+      street: String ,
+      city: String ,
+      pincode: String ,
     },
   },
   { timestamps: true }
