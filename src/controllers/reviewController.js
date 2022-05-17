@@ -47,7 +47,7 @@ const createReview = async function (req, res) {
     // increment by 1 is added every time in reviews
 
 
-    const finalUpdate = await bookModel
+    await bookModel
       .find({ _id: bookId })
       .updateOne({ $inc: { reviews: 1 } }); 
 

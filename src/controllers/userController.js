@@ -75,7 +75,7 @@ const createUser = async function (req, res) {
     }
 
     // Checking if email is valid or not //
-    if (!/^(\w+)@(\w+).(([\w]{2,3})*(.[\w]{2,3})?)$/.test(email)) {
+    if (!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(email)) {
       return res
         .status(400)
         .send({ status: false, message: "Please enter correct email." });
@@ -176,7 +176,7 @@ const loginUser = async function (req, res) {
     );
  
     return res
-      .status(201)
+      .status(200)
       .send({ Status: true, message: "Success", data: token });
   }
    catch (error) {

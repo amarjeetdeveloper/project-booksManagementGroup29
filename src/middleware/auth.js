@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bookModel = require("../models/BooksModel");
-const  mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const userModel = require("../models/userModel");
 
 ///////////////// [ ALL AUTHENTICATION LOGIC HERE ] /////////////////
