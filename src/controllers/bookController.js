@@ -240,7 +240,7 @@ const delBook = async function (req, res) {
 };
 
 module.exports.createBook = createBook;
-module.exports.getBook = getBook;
+module.exports.getBooks = getBooks;
 module.exports.getBookByPathParam = getBookByPathParam;
 module.exports.updateBook = updateBook;
 module.exports.delBook = delBook;
