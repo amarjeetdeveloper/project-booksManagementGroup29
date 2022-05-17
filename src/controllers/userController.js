@@ -1,19 +1,17 @@
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 
-const isValid = function (value) {
-    if (typeof value === "undefined" || value === null) return false;
-    if (typeof value === "string" && value.trim().length === 0) return false;
-    return true;
-  };
-
-const isValidTitle = function (title) {
-    return ["Mr", "Miss", "Mrs"].indexOf(title) !== -1;
-  };
+// const isValid = function (value) {
+//     if (typeof value === "undefined" || value === null) return false;
+//     if (typeof value === "string" && value.trim().length === 0) return false;
+//     if (typeof value === "number" && value.toString.trim().length === 0) return false;
+//     return true;
+//   };
 
 const createUser = async function (req, res) {
   try {
     const data = req.body;
+    if(Object.keys(data).length==0) return res.status(400).send({status:false, message:"please provide data"})
     const { title, name, phone, email, password } = data; // destructuring of data object
 
     // Checking if title is sent through body or not//
@@ -25,11 +23,10 @@ const createUser = async function (req, res) {
     }
 
     // Checking if title is sent through body or not//
-    
-    if (!isValidTitle(title)) {
+    if (!/^(Miss|Mr|Mrs)$/.test(title)) {
       return res
         .status(400)
-        .send({ status: false, message: "Please provide right title" });
+        .send({ status: false, message: "Please enter correct title." });
     }
 
     // Checking if name is sent through body or not//
@@ -78,7 +75,7 @@ const createUser = async function (req, res) {
     }
 
     // Checking if email is valid or not //
-    if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email)) {
+    if (!/^(\w+)@(\w+).(([\w]{2,3})*(.[\w]{2,3})?)$/.test(email)) {
       return res
         .status(400)
         .send({ status: false, message: "Please enter correct email." });
@@ -102,12 +99,18 @@ const createUser = async function (req, res) {
         .send({ status: false, message: "Please provide password" });
     }
 
-
-
     // checking password with regex //
     if (!/^([a-zA-Z0-9!@#$%^&*_\-+=><]{8,15})$/.test(password)) { return res.status(400).send({ status: false, message: "Please provide a valid password between 8 to 15 character length." }) }
     
-  
+    const duplicatePassword = await userModel.findOne({
+       password: password,
+        isDeleted: false,
+      });
+      if (duplicatePassword) {
+        return res
+          .status(409)
+          .send({ status: false, message: "User with this password already exist" });
+      }
     // creation of new document in db//
     const userCreated = await userModel.create(data);
     res.status(201).send({
@@ -115,15 +118,19 @@ const createUser = async function (req, res) {
       message: "Success",
       data: userCreated,
     });
-  } catch (error) {
-    return res.status(500).send({ status: false, message: error.message });
   }
+
+  catch (error) {
+    return res.status(500).send({ status: false, message: error.message });
 };
+}
 
 const loginUser = async function (req, res) {
   try {
     const data = req.body;
     const { email, password } = data;
+
+    if(Object.keys(data).length==0) return res.status(400).send({status:false, message:"please provide data"})
 
     // Checking if email is sent through body or not//
     if (!email)
@@ -132,7 +139,7 @@ const loginUser = async function (req, res) {
         .send({ status: false, message: "email is missing" });
 
     // Checking if email is valid or not //
-    if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email)) {
+    if (!/^(\w+)@(\w+).(([\w]{2,3})*(.[\w]{2,3})?)$/.test(email)) {
       return res
         .status(400)
         .send({ status: false, message: "Please enter correct email." });
@@ -160,7 +167,7 @@ const loginUser = async function (req, res) {
     if (!findUser)
       return res
         .status(404)
-        .send({ Status: false, message: " user does not exists" });
+        .send({ Status: false, message: " please enter valid email or password" });
 
     const token = jwt.sign(
       { userId:findUser._id.toString() },
