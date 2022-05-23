@@ -195,6 +195,3 @@ module.exports.createReview = createReview;
 module.exports.updateReview = updateReview;
 
 module.exports.deleteReviews = deleteReviews;
-
-
-
